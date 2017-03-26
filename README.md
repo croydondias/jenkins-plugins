@@ -1,6 +1,6 @@
 # jenkins-plugins
 
-Simple jenkins plugns based of this [tutorial](https://www.youtube.com/watch?v=azyv183Ua6U&t=6475s)
+Simple jenkins plugins based of this [tutorial](https://www.youtube.com/watch?v=azyv183Ua6U&t=6475s)
 
 To run a local instance of jenkins with this plugin
 ```bash
