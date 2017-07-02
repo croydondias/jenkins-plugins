@@ -18,15 +18,19 @@ import org.kohsuke.stapler.QueryParameter;
  */
 public class SleepBuilder extends Builder {
     private long time;
+    private String hostname;
+    private int port;
 
     @DataBoundConstructor
-    public SleepBuilder(long time) {
+    public SleepBuilder(long time, String hostname, int port) {
         this.time = time;
+        this.hostname = hostname;
+        this.port = port;
     }
 
     @Override
     public boolean perform(Build<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException {
-        listener.getLogger().println(String.format("Sleeping for %d ms.", time));
+        listener.getLogger().println(String.format("Sleeping for %d ms on %s:%d.", time, hostname, port));
         Thread.sleep(time);
         return true;
     }
@@ -37,6 +41,22 @@ public class SleepBuilder extends Builder {
 
     public void setTime(long time) {
         this.time = time;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     @Extension
@@ -55,8 +75,22 @@ public class SleepBuilder extends Builder {
         public FormValidation doCheckTime(@QueryParameter String time) {
             try {
                 long number = Long.valueOf(time);
-                return (number >= 0) ? FormValidation.ok() : FormValidation.error("Please enter a number >= 0" +
-                        "") ;
+                return (number >= 0) ? FormValidation.ok() : FormValidation.error("Please enter a number >= 0");
+            } catch (NumberFormatException e) {
+                return FormValidation.error("Please enter a valid number");
+            }
+        }
+
+        public FormValidation doCheckHostname(@QueryParameter String hostname) {
+            if (hostname == null || hostname.length() == 0 || hostname.trim().length() == 0)
+                return FormValidation.error("Please enter a valid hostname value");
+            return FormValidation.ok();
+        }
+
+        public FormValidation doCheckPort(@QueryParameter String port) {
+            try {
+                int number = Integer.valueOf(port);
+                return (number >= 0) ? FormValidation.ok() : FormValidation.error("Please enter a number >= 0");
             } catch (NumberFormatException e) {
                 return FormValidation.error("Please enter a valid number");
             }
